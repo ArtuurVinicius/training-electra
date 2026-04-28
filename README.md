@@ -53,6 +53,8 @@ python electra/confusion_matrix_electra.py --dataset_path seu_dataset_rotulado.c
 
 ## BERT (DistilBERT) - Fluxo equivalente ao Electra
 
+Modelo usado: DistilBERT (`distilbert-base-multilingual-cased`).
+
 Passo 1 - Continual pretraining (MLM) sem labels:
 
 ```bash
@@ -71,10 +73,10 @@ Passo 3 - Matriz de confusao com o threshold:
 python bert/confusion_matrix_bert.py --dataset_path seu_dataset_rotulado.csv --text_column content --label_column label --model_dir ./bert/bert_output/model-final --tokenizer_dir ./bert/tokenizer --save_plot cm_bert_mlm.png --save_scored_csv scored_bert_cm.csv
 ```
 
-Passo 4 - Inferencia (usa score MLM + threshold):
+Passo 4 - Inferencia de noticia de saude (usa score MLM + threshold):
 
 ```bash
-python bert/infer_fake.py --model_dir ./bert/bert_output/model-final --tokenizer_dir ./bert/tokenizer --threshold 6.0 --text "NOTICIA AQUI"
+python bert/infer_fake.py --model_dir ./bert/bert_output_finetune/model-final --tokenizer_dir ./bert/tokenizer --threshold 6.0 --text "NOTICIA AQUI"
 ```
 
 Observacoes:
