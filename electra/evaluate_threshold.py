@@ -185,8 +185,8 @@ def main():
     parser.add_argument('--max_samples', type=int, default=-1, help='Limita amostras (debug)')
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--max_length', type=int, default=512)
-    parser.add_argument('--discriminator_dir', type=str, default='./electra_output/discriminator-final')
-    parser.add_argument('--tokenizer_dir', type=str, default='./electra_output')
+    parser.add_argument('--discriminator_dir', type=str, default='./electra/electra_output/discriminator-final')
+    parser.add_argument('--tokenizer_dir', type=str, default='./electra/electra_output')
     parser.add_argument('--save_scored_csv', type=str, default='', help='Caminho opcional para salvar score/predicao')
     args = parser.parse_args()
 

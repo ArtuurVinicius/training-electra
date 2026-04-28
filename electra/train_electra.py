@@ -84,10 +84,10 @@ def build_fast_tokenizer_from_bpe_files(tokenizer_dir, max_seq_length):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset_path', type=str, default='corpus.csv')
+    parser.add_argument('--dataset_path', type=str, default='./dataset/corpus.csv')
     parser.add_argument('--text_column', type=str, default='content')
-    parser.add_argument('--output_dir', type=str, default='./electra_output')
-    parser.add_argument('--tokenizer_dir', type=str, default='./tokenizer')
+    parser.add_argument('--output_dir', type=str, default='./electra/electra_output')
+    parser.add_argument('--tokenizer_dir', type=str, default='./electra/tokenizer')
     parser.add_argument('--train_tokenizer', action='store_true')
     parser.add_argument('--vocab_size', type=int, default=30000)
     parser.add_argument('--max_seq_length', type=int, default=128)

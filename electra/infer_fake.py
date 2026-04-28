@@ -24,8 +24,8 @@ def main():
     parser.add_argument('--text', type=str, default=None, help='Texto a avaliar')
     parser.add_argument('--file', type=str, default=None, help='Arquivo de texto (uma linha por exemplo)')
     parser.add_argument('--threshold', type=float, default=0.16, help='Limiar médio para considerar "fake"')
-    parser.add_argument('--discriminator_dir', type=str, default='./electra_output/discriminator-final')
-    parser.add_argument('--tokenizer_dir', type=str, default='./electra_output')
+    parser.add_argument('--discriminator_dir', type=str, default='./electra/electra_output/discriminator-final')
+    parser.add_argument('--tokenizer_dir', type=str, default='./electra/electra_output')
     args = parser.parse_args()
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
