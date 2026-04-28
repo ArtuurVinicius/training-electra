@@ -81,4 +81,3 @@ Observacoes:
 
 - Nesse fluxo, o score do BERT e baseado em perda MLM (cross-entropy mascarada): score maior tende a indicar texto mais "fake".
 - O valor ideal de threshold deve ser calibrado no seu dataset rotulado com `bert/evaluate_treshold.py`.
-- Se voce quiser classificacao supervisionada tradicional (com cabeca de classificacao), o script opcional e `bert/train_bert_supervised.py`.
