@@ -84,7 +84,7 @@ def build_fast_tokenizer_from_bpe_files(tokenizer_dir, max_seq_length):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset_path', type=str, default='./dataset/corpus.csv')
+    parser.add_argument('--dataset_path', type=str, default='./dataset/dataset_labeled.csv')
     parser.add_argument('--text_column', type=str, default='content')
     parser.add_argument('--output_dir', type=str, default='./electra/electra_output')
     parser.add_argument('--tokenizer_dir', type=str, default='./electra/tokenizer')

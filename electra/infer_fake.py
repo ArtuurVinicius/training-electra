@@ -1,4 +1,5 @@
 import argparse
+import json
 import torch
 from transformers import PreTrainedTokenizerFast, ElectraForPreTraining
 
@@ -24,9 +25,17 @@ def main():
     parser.add_argument('--text', type=str, default=None, help='Texto a avaliar')
     parser.add_argument('--file', type=str, default=None, help='Arquivo de texto (uma linha por exemplo)')
     parser.add_argument('--threshold', type=float, default=0.16, help='Limiar médio para considerar "fake"')
+    parser.add_argument('--threshold_json', type=str, default='', help='JSON com best_threshold (gerado pelo evaluate_threshold.py)')
     parser.add_argument('--discriminator_dir', type=str, default='./electra/electra_output/discriminator-final')
     parser.add_argument('--tokenizer_dir', type=str, default='./electra/electra_output')
     args = parser.parse_args()
+
+    if args.threshold_json:
+        with open(args.threshold_json, 'r', encoding='utf-8') as f:
+            payload = json.load(f)
+        if 'best_threshold' not in payload:
+            raise ValueError('threshold_json inválido: chave "best_threshold" não encontrada')
+        args.threshold = float(payload['best_threshold'])
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     tokenizer = PreTrainedTokenizerFast.from_pretrained(args.tokenizer_dir)

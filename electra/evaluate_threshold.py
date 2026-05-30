@@ -1,5 +1,6 @@
 import argparse
 import csv
+import json
 import math
 from typing import Dict, List, Tuple
 
@@ -175,6 +176,49 @@ def find_best_threshold(scores: List[float], labels: List[int]) -> Dict[str, flo
     return best
 
 
+def build_threshold_curve(scores: List[float], labels: List[int]) -> List[Dict[str, float]]:
+    paired = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
+    total = len(paired)
+    positives = sum(labels)
+    negatives = total - positives
+    if total == 0:
+        return []
+
+    curve: List[Dict[str, float]] = []
+
+    tp = 0
+    fp = 0
+    index = 0
+    while index < total:
+        current_score = paired[index][0]
+        group_pos = 0
+        group_neg = 0
+
+        while index < total and paired[index][0] == current_score:
+            if paired[index][1] == 1:
+                group_pos += 1
+            else:
+                group_neg += 1
+            index += 1
+
+        tp += group_pos
+        fp += group_neg
+        fn = positives - tp
+        tn = negatives - fp
+        metrics = compute_metrics(tp=tp, fp=fp, tn=tn, fn=fn)
+        pred_fake = tp + fp
+        metrics.update(
+            {
+                'threshold': float(current_score),
+                'pred_fake': int(pred_fake),
+                'pred_real': int(total - pred_fake),
+            }
+        )
+        curve.append(metrics)
+
+    return curve
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_path', type=str, required=True, help='CSV com texto e label')
@@ -188,6 +232,8 @@ def main():
     parser.add_argument('--discriminator_dir', type=str, default='./electra/electra_output/discriminator-final')
     parser.add_argument('--tokenizer_dir', type=str, default='./electra/electra_output')
     parser.add_argument('--save_scored_csv', type=str, default='', help='Caminho opcional para salvar score/predicao')
+    parser.add_argument('--save_threshold_json', type=str, default='', help='Caminho opcional para salvar best_threshold/metricas em JSON')
+    parser.add_argument('--save_threshold_curve_csv', type=str, default='', help='Caminho opcional para salvar métricas por threshold em CSV')
     args = parser.parse_args()
 
     fake_values = {v.strip().lower() for v in args.fake_values.split(',') if v.strip()}
@@ -224,6 +270,29 @@ def main():
     print(f'accuracy={best["accuracy"]:.6f} f1={best["f1"]:.6f} precision={best["precision"]:.6f} recall={best["recall"]:.6f}')
     print(f'confusion_matrix: TP={best["tp"]} FP={best["fp"]} TN={best["tn"]} FN={best["fn"]}')
 
+    if args.save_threshold_json:
+        payload = {
+            'best_threshold': float(best['threshold']),
+            'samples': int(len(texts)),
+            'skipped': int(skipped),
+            'device': str(device.type),
+            'metrics': {
+                'accuracy': float(best['accuracy']),
+                'f1': float(best['f1']),
+                'precision': float(best['precision']),
+                'recall': float(best['recall']),
+            },
+            'confusion_matrix': {
+                'tp': int(best['tp']),
+                'fp': int(best['fp']),
+                'tn': int(best['tn']),
+                'fn': int(best['fn']),
+            },
+        }
+        with open(args.save_threshold_json, 'w', encoding='utf-8') as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        print(f'threshold_json_saved={args.save_threshold_json}')
+
     if args.save_scored_csv:
         threshold = best['threshold']
         with open(args.save_scored_csv, 'w', encoding='utf-8', newline='') as f:
@@ -233,6 +302,41 @@ def main():
                 pred = 1 if score >= threshold else 0
                 writer.writerow([text, label, f'{score:.8f}', pred])
         print(f'scored_csv_saved={args.save_scored_csv}')
+
+    if args.save_threshold_curve_csv:
+        curve = build_threshold_curve(scores, labels)
+        with open(args.save_threshold_curve_csv, 'w', encoding='utf-8', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                'threshold',
+                'accuracy',
+                'f1',
+                'precision',
+                'recall',
+                'tp',
+                'fp',
+                'tn',
+                'fn',
+                'pred_fake',
+                'pred_real',
+            ])
+            for row in curve:
+                writer.writerow(
+                    [
+                        f"{row['threshold']:.8f}",
+                        f"{row['accuracy']:.8f}",
+                        f"{row['f1']:.8f}",
+                        f"{row['precision']:.8f}",
+                        f"{row['recall']:.8f}",
+                        int(row['tp']),
+                        int(row['fp']),
+                        int(row['tn']),
+                        int(row['fn']),
+                        int(row['pred_fake']),
+                        int(row['pred_real']),
+                    ]
+                )
+        print(f'threshold_curve_csv_saved={args.save_threshold_curve_csv}')
 
 
 if __name__ == '__main__':
