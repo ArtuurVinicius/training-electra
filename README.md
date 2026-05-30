@@ -112,7 +112,7 @@ Modelo usado: DistilBERT (`distilbert-base-multilingual-cased`).
 Passo 1 - Continual pretraining (MLM) sem labels:
 
 ```bash
-python bert/train_bert.py --dataset_path ./dataset/corpus.csv --text_column content --output_dir ./bert/bert_output --tokenizer_dir ./bert/tokenizer --per_device_train_batch_size 8 --max_seq_length 128 --num_train_epochs 3 --fp16 --gradient_checkpointing
+python bert/train_bert.py --dataset_path ./dataset/dataset_labeled.csv --text_column content --output_dir ./bert/bert_output --tokenizer_dir ./bert/tokenizer --per_device_train_batch_size 8 --max_seq_length 128 --num_train_epochs 3 --fp16 --gradient_checkpointing
 ```
 
 Passo 2 - Calibrar threshold com CSV rotulado (opcional, recomendado para definir corte):
@@ -130,10 +130,11 @@ python bert/confusion_matrix_bert.py --dataset_path seu_dataset_rotulado.csv --t
 Passo 4 - Inferencia de noticia de saude (usa score MLM + threshold):
 
 ```bash
-python bert/infer_fake.py --model_dir ./bert/bert_output_finetune/model-final --tokenizer_dir ./bert/tokenizer --threshold 6.0 --text "NOTICIA AQUI"
+python bert/infer_fake.py --model_dir ./bert/bert_output/model-final --tokenizer_dir ./bert/tokenizer --max_length 128 --mask_stride 7 --text "COLE A NOTICIA AQUI"
 ```
 
 Observacoes:
 
 - Nesse fluxo, o score do BERT e baseado em perda MLM (cross-entropy mascarada): score maior tende a indicar texto mais "fake".
 - O valor ideal de threshold deve ser calibrado no seu dataset rotulado com `bert/evaluate_treshold.py`.
+- No codigo atual, o `bert/infer_fake.py` ja vem com um threshold padrao (0.023989). Se quiser sobrescrever, use `--threshold`.

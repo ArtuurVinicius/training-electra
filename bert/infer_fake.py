@@ -10,7 +10,7 @@ def main() -> None:
 	parser = argparse.ArgumentParser(description='Run fake/real inference with BERT MLM score (Electra-like flow)')
 	parser.add_argument('--text', type=str, default=None, help='Single text to classify')
 	parser.add_argument('--file', type=str, default=None, help='Text file (one line per sample)')
-	parser.add_argument('--threshold', type=float, default=5.0, help='Decision threshold over MLM loss score')
+	parser.add_argument('--threshold', type=float, default=0.023989, help='Decision threshold over MLM loss score')
 	parser.add_argument('--max_length', type=int, default=128)
 	parser.add_argument('--mask_stride', type=int, default=7, help='Mask one token each N positions to compute MLM score')
 	parser.add_argument('--model_dir', type=str, default='./bert/bert_output/model-final')

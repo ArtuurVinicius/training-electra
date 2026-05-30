@@ -107,7 +107,7 @@ def load_text_dataset(args: argparse.Namespace, tokenizer: AutoTokenizer):
 
 def main():
 	parser = argparse.ArgumentParser(description='Fine-tune DistilBERT (MLM) on custom corpus.csv')
-	parser.add_argument('--dataset_path', type=str, default='./dataset/corpus.csv')
+	parser.add_argument('--dataset_path', type=str, default='./dataset/dataset_labeled.csv')
 	parser.add_argument('--text_column', type=str, default='content')
 	parser.add_argument('--model_name_or_path', type=str, default='distilbert-base-multilingual-cased')
 	parser.add_argument('--output_dir', type=str, default='./bert/bert_output')
