@@ -9,14 +9,42 @@ Prerequisitos:
 Uso básico (treina tokenizer e continua pré-treinamento):
 
 ```bash
-python electra/train_electra.py --dataset_path ./dataset/corpus.csv --train_tokenizer --tokenizer_dir ./electra/tokenizer --output_dir ./electra/electra_output \
+python electra/train_electra.py --dataset_path ./dataset/dataset_labeled.csv --train_tokenizer --tokenizer_dir ./electra/tokenizer --output_dir ./electra/electra_output \
   --per_device_train_batch_size 8 --num_train_epochs 3 --max_seq_length 128
+```
+
+No Windows, rode em uma linha só (ou use o caractere de continuação correto do seu terminal). Exemplos:
+
+PowerShell:
+
+```powershell
+python .\electra\train_electra.py `
+  --dataset_path .\dataset\dataset_labeled.csv `
+  --train_tokenizer `
+  --tokenizer_dir .\electra\tokenizer `
+  --output_dir .\electra\electra_output `
+  --per_device_train_batch_size 8 `
+  --num_train_epochs 3 `
+  --max_seq_length 128
+```
+
+CMD:
+
+```bat
+python electra\train_electra.py ^
+  --dataset_path dataset\dataset_labeled.csv ^
+  --train_tokenizer ^
+  --tokenizer_dir electra\tokenizer ^
+  --output_dir electra\electra_output ^
+  --per_device_train_batch_size 8 ^
+  --num_train_epochs 3 ^
+  --max_seq_length 128
 ```
 
 Uso sem treinar tokenizer (usa tokenizer do modelo gerador especificado):
 
 ```bash
-python electra/train_electra.py --dataset_path ./dataset/corpus.csv --output_dir ./electra/electra_output \
+python electra/train_electra.py --dataset_path ./dataset/dataset_labeled.csv --output_dir ./electra/electra_output \
   --per_device_train_batch_size 8 --num_train_epochs 3
 ```
 
@@ -33,16 +61,42 @@ Calibracao de threshold (CSV rotulado):
 python electra/evaluate_threshold.py --dataset_path seu_dataset_rotulado.csv --text_column content --label_column label --discriminator_dir ./electra/electra_output/discriminator-final --tokenizer_dir ./electra/electra_output --batch_size 32 --save_scored_csv scored_output.csv
 ```
 
+Exemplo com o dataset gerado (labels `fake`/`true`) salvando o melhor threshold em JSON (CMD):
+
+```bat
+python electra\evaluate_threshold.py --dataset_path dataset\dataset_labeled.csv --text_column content --label_column label --fake_values fake --real_values true --discriminator_dir electra\electra_output\discriminator-final --tokenizer_dir electra\electra_output --save_threshold_json electra\threshold.json
+```
+
+Gerar uma tabela com métricas para cada threshold (útil para escolher um corte com menos falsos positivos) (CMD):
+
+```bat
+python electra\evaluate_threshold.py --dataset_path dataset\dataset_labeled.csv --text_column content --label_column label --fake_values fake --real_values true --discriminator_dir electra\electra_output\discriminator-final --tokenizer_dir electra\electra_output --save_threshold_curve_csv electra\threshold_curve.csv
+```
+
+Usar o threshold salvo na inferência (CMD):
+
+```bat
+python electra\infer_fake.py --text "NOTICIA AQUI" --discriminator_dir electra\electra_output\discriminator-final --tokenizer_dir electra\electra_output --threshold_json electra\threshold.json
+```
+
 Observacoes:
 
 - Labels esperados por padrao: `0,real,verdadeiro` para REAL e `1,fake,falso` para FAKE.
 - O script testa todos os thresholds possiveis com base nos scores e escolhe o melhor por acuracia (desempate por F1/precision/recall).
 - Se quiser mapear outros nomes de label, use `--fake_values` e `--real_values`.
 
+## Gerar dataset rotulado (fake/true)
+
+Para unir `dataset/corpus.csv` (fake) + `dataset/true_news.csv` (true) em um novo CSV com a coluna `label`:
+
+```bash
+python dataset/merge_labeled_dataset.py --output_path dataset/dataset_labeled.csv
+```
+
 Inferencia de noticia de saude:
 
 ```bash
-python electra/infer_fake.py --text "NOTICIA AQUI"
+python electra/infer_fake.py --discriminator_dir electra/electra_output/discriminator-final --tokenizer_dir electra/electra_output --threshold 0.056245 --text "COLE A NOTICIA AQUI"
 ```
 
 Matriz de confusao (CSV rotulado):
@@ -51,7 +105,7 @@ Matriz de confusao (CSV rotulado):
 python electra/confusion_matrix_electra.py --dataset_path seu_dataset_rotulado.csv --text_column content --label_column label --save_plot cm_electra.png --save_scored_csv scored_electra.csv
 ```
 
-## BERT (DistilBERT) - Fluxo equivalente ao Electra
+## Treinamento distilBert (local)
 
 Modelo usado: DistilBERT (`distilbert-base-multilingual-cased`).
 
