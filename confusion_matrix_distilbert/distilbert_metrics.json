@@ -1,0 +1,38 @@
+{
+  "dataset_path": "C:\\Projetos\\TCC\\treinamento\\dataset\\dataset_labeled.csv",
+  "model_dir": "C:\\Projetos\\TCC\\treinamento\\bert\\bert_output\\model-final",
+  "tokenizer_dir": "C:\\Projetos\\TCC\\treinamento\\bert\\bert_output\\model-final",
+  "samples": 7076,
+  "skipped": 0,
+  "device": "cuda",
+  "mask_stride": 7,
+  "threshold": 0.02398892492055893,
+  "threshold_source": "auto_selected_on_evaluation_dataset",
+  "positive_class": "FAKE",
+  "score_semantics": "higher_mlm_loss_means_more_likely_fake",
+  "metrics": {
+    "accuracy": 0.857263990955342,
+    "recall": 1.0,
+    "f1_score": 0.9095144239383623,
+    "precision": 0.8340453499835688,
+    "recall_macro": 0.7475,
+    "f1_macro": 0.7858608908989471,
+    "confusion_matrix": [
+      [
+        990,
+        1010
+      ],
+      [
+        0,
+        5076
+      ]
+    ],
+    "confusion_counts": {
+      "tn": 990,
+      "fp": 1010,
+      "fn": 0,
+      "tp": 5076
+    }
+  },
+  "classification_report": "              precision    recall  f1-score   support\n\n        REAL       1.00      0.49      0.66      2000\n        FAKE       0.83      1.00      0.91      5076\n\n    accuracy                           0.86      7076\n   macro avg       0.92      0.75      0.79      7076\nweighted avg       0.88      0.86      0.84      7076\n"
+}
