@@ -107,11 +107,11 @@ def load_text_dataset(args: argparse.Namespace, tokenizer: AutoTokenizer):
 
 def main():
 	parser = argparse.ArgumentParser(description='Fine-tune DistilBERT (MLM) on custom corpus.csv')
-	parser.add_argument('--dataset_path', type=str, default='./dataset/dataset_labeled.csv')
+	parser.add_argument('--dataset_path', type=str, default='./dataset/final_corpus.csv')
 	parser.add_argument('--text_column', type=str, default='content')
 	parser.add_argument('--model_name_or_path', type=str, default='distilbert-base-multilingual-cased')
-	parser.add_argument('--output_dir', type=str, default='./bert/bert_output')
-	parser.add_argument('--tokenizer_dir', type=str, default='./bert/tokenizer')
+	parser.add_argument('--output_dir', type=str, default='./bert/bert_output_final')
+	parser.add_argument('--tokenizer_dir', type=str, default='./bert/tokenizer_final')
 	parser.add_argument('--max_seq_length', type=int, default=128)
 	parser.add_argument('--per_device_train_batch_size', type=int, default=8)
 	parser.add_argument('--gradient_accumulation_steps', type=int, default=1)

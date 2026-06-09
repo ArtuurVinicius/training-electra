@@ -41,8 +41,8 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "confusion_matrix_distilbert"
 DEFAULT_DATASET_PATH = PROJECT_ROOT / "dataset" / "dataset_labeled.csv"
-DEFAULT_MODEL_DIR = PROJECT_ROOT / "bert" / "bert_output" / "model-final"
-DEFAULT_TOKENIZER_DIR = PROJECT_ROOT / "bert" / "bert_output" / "model-final"
+DEFAULT_MODEL_DIR = PROJECT_ROOT / "bert" / "bert_output_final" / "model-final"
+DEFAULT_TOKENIZER_DIR = PROJECT_ROOT / "bert" / "bert_output_final" / "model-final"
 
 
 def parse_csv_values(raw_values: str) -> set[str]:
@@ -185,11 +185,14 @@ def confusion_counts(labels: list[int], predictions: list[int]) -> dict[str, int
 
 
 def metric_sort_key(labels: list[int], predictions: list[int]) -> tuple[float, float, float, float]:
+    # Optimize for balanced (macro) performance so the imbalanced REAL class is
+    # not sacrificed. Macro F1 is the primary objective, with macro recall and
+    # accuracy as tie-breakers.
     return (
+        f1_score(labels, predictions, average="macro", zero_division=0),
+        recall_score(labels, predictions, average="macro", zero_division=0),
         accuracy_score(labels, predictions),
         f1_score(labels, predictions, zero_division=0),
-        precision_score(labels, predictions, zero_division=0),
-        recall_score(labels, predictions, zero_division=0),
     )
 
 
