@@ -74,6 +74,24 @@ def save_training_checkpoint(
 	torch.save(state, os.path.join(ckpt_dir, 'trainer_state.pt'))
 
 
+def save_epoch_checkpoint(
+	model: AutoModelForMaskedLM,
+	tokenizer: AutoTokenizer,
+	output_dir: str,
+	epoch: int,
+) -> str:
+	"""Save a full model+tokenizer checkpoint at the end of an epoch.
+
+	Produces ./<output_dir>/model-epoch-<epoch> so that each epoch can later be
+	evaluated independently (accuracy vs epochs experiment).
+	"""
+	ckpt_dir = os.path.join(output_dir, f'model-epoch-{epoch}')
+	os.makedirs(ckpt_dir, exist_ok=True)
+	model.save_pretrained(ckpt_dir)
+	tokenizer.save_pretrained(ckpt_dir)
+	return ckpt_dir
+
+
 def load_text_dataset(args: argparse.Namespace, tokenizer: AutoTokenizer):
 	ds = load_dataset('csv', data_files=args.dataset_path, split='train')
 	text_column = choose_text_column(ds.column_names, args.text_column)
@@ -268,6 +286,9 @@ def main():
 
 			if args.max_train_steps > 0 and global_step >= args.max_train_steps:
 				break
+
+		epoch_dir = save_epoch_checkpoint(model, tokenizer, args.output_dir, epoch + 1)
+		print(f'Saved epoch checkpoint (epoch {epoch + 1}): {epoch_dir}')
 
 		if args.max_train_steps > 0 and global_step >= args.max_train_steps:
 			break

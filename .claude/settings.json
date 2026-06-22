@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(venv/Scripts/python.exe confusion_matrix_distilbert/distilbert_accuracy_vs_epochs.py)",
+      "Bash(venv/Scripts/python.exe -m py_compile confusion_matrix_distilbert/distilbert_accuracy_vs_steps.py)",
+      "Bash(venv/Scripts/python.exe confusion_matrix_distilbert/distilbert_accuracy_vs_steps.py)"
+    ]
+  }
+}
