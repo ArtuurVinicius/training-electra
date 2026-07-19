@@ -3,7 +3,11 @@
     "allow": [
       "Bash(venv/Scripts/python.exe confusion_matrix_distilbert/distilbert_accuracy_vs_epochs.py)",
       "Bash(venv/Scripts/python.exe -m py_compile confusion_matrix_distilbert/distilbert_accuracy_vs_steps.py)",
-      "Bash(venv/Scripts/python.exe confusion_matrix_distilbert/distilbert_accuracy_vs_steps.py)"
+      "Bash(venv/Scripts/python.exe confusion_matrix_distilbert/distilbert_accuracy_vs_steps.py)",
+      "Bash(tasklist)",
+      "Bash(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader)",
+      "Bash(python baseline_sem_adaptacao.py)",
+      "Bash(python -c ' *)"
     ]
   }
 }
